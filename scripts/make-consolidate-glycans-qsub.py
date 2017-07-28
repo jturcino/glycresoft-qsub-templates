@@ -16,7 +16,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # THE DEFINING PANDAS SCRIPT PATH VARIABLE
-    pandas='/projectnb/glyco-ms/data/brite_2017/qsub_templates/pandas-extract-csv.py'
+    pandas='/projectnb/glyco-ms/data/brite_2017/glycresoft-qsub-templates/scripts/pandas-extract-csv.py'
 
     # handle email
     if len(args.email) > 0:
@@ -25,7 +25,7 @@ if __name__ == '__main__':
     # turn args.csv list into space-separated string
     csvs = ' '.join(args.csv)
 
-    template = open('consolidate-glycans.qsub.tmpl', 'r').read()
+    template = open('templates/consolidate-glycans.qsub.tmpl', 'r').read()
     template = jinja2.Template(template)
     script_text = template.render(dataset=args.source, pandas=pandas, nglycans=args.outfile, csvs=csvs, email=args.email)
     sys.stdout.write(script_text)

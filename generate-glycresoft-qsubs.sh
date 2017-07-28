@@ -105,7 +105,7 @@ for mzml in $pre_mzmls; do
     id="$(basename $mzml)"
     id="${id%%.*}"
     echo "    $id..."
-    ./make-preprocess-mzml-qsub.py -m $mzml -i $id -s $project_name $email >> $submission_dir/preprocess-mzml-$project_name-$id.qsub
+    ./scripts/make-preprocess-mzml-qsub.py -m $mzml -i $id -s $project_name $email >> $submission_dir/preprocess-mzml-$project_name-$id.qsub
     out="preprocess/$id.preprocessed.mzML"
     mzmls="$mzmls $out"
 done
@@ -113,7 +113,7 @@ done
 # build combinatorial hypothesis
 echo "Making combinatorial hypothesis..."
 combo_hypothesis="$project_name-hypothesis.db"
-./make-build-hypothesis-qsub.py $mzid_fa -r $combo_rules -s $project_name -d $combo_hypothesis $email >> $submission_dir/build-hypothesis-combinatorial-$project_name.qsub
+./scripts/make-build-hypothesis-qsub.py $mzid_fa -r $combo_rules -s $project_name -d $combo_hypothesis $email >> $submission_dir/build-hypothesis-combinatorial-$project_name.qsub
 
 # search for glycopeptides
 echo "Searching for glycopeptides for"
@@ -123,7 +123,7 @@ for mzml in $mzmls; do
     id="${id%%.*}"
     echo "    $id..."
     db="$id.db"
-    ./make-search-glycopeptide-qsub.py -m $mzml -d $combo_hypothesis -i $id -s $project_name -o $db $email >> $submission_dir/search-glycopeptide-$project_name-$id.qsub
+    ./scripts/make-search-glycopeptide-qsub.py -m $mzml -d $combo_hypothesis -i $id -s $project_name -o $db $email >> $submission_dir/search-glycopeptide-$project_name-$id.qsub
     dbs="$dbs search/$db"
 done
 
@@ -135,19 +135,19 @@ for db in $dbs; do
     id="${id%%.*}"
     echo "    $id..."
     csv="${id}_glycopeptides.csv"
-    ./make-glycopeptide-identification-qsub.py -d $db -c $csv -i $id -s $project_name $email >> $submission_dir/glycopeptide-identification-$project_name-$id.qsub
+    ./scripts/make-glycopeptide-identification-qsub.py -d $db -c $csv -i $id -s $project_name $email >> $submission_dir/glycopeptide-identification-$project_name-$id.qsub
     csv_args="$csv_args -c glycopeptide_csvs/$csv"
 done
 
 # run pandas
 echo "Consolidating unique glycans..."
 glycans="nglycans.txt"
-./make-consolidate-glycans-qsub.py $csv_args -s $project_name -o $glycans $email >> $submission_dir/consolidate-glycans-$project_name.qsub
+./scripts/make-consolidate-glycans-qsub.py $csv_args -s $project_name -o $glycans $email >> $submission_dir/consolidate-glycans-$project_name.qsub
 
 # build text hypothesis
 echo "Making restricted text hypothesis..."
 text_hypothesis="$project_name-hypothesis-restricted.db"
-./make-build-hypothesis-qsub.py $mzid_fa -g $glycans -s $project_name-restricted -d $text_hypothesis $email >> $submission_dir/build-hypothesis-text-$project_name-restricted.qsub
+./scripts/make-build-hypothesis-qsub.py $mzid_fa -g $glycans -s $project_name-restricted -d $text_hypothesis $email >> $submission_dir/build-hypothesis-text-$project_name-restricted.qsub
 
 # search glycopeptides (restricted)
 echo "Searching for glycopeptides for"
@@ -156,5 +156,5 @@ for mzml in $mzmls; do
     id="${id%%.*}-restricted"
     echo "    $id..."
     db="$id.db"
-    ./make-search-glycopeptide-qsub.py -m $mzml -d $text_hypothesis -o $db -i $id -s $project_name-restricted $email >> $submission_dir/search-glycopeptide-$project_name-restricted-$id.qsub
+    ./scripts/make-search-glycopeptide-qsub.py -m $mzml -d $text_hypothesis -o $db -i $id -s $project_name-restricted $email >> $submission_dir/search-glycopeptide-$project_name-restricted-$id.qsub
 done

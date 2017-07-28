@@ -21,7 +21,7 @@ if __name__ == '__main__':
     if len(args.email) > 0:
         args.email = '#$ -m e \n#$ -M '+args.email
 
-    template = open('search-glycopeptide.qsub.tmpl', 'r').read()
+    template = open('templates/search-glycopeptide.qsub.tmpl', 'r').read()
     template = jinja2.Template(template)
     script_text = template.render(processed_mzml_file=args.mzml, input_db=args.in_db, output_db=args.out_db, sample_id=args.id, source=args.source, email=args.email)
     sys.stdout.write(script_text)

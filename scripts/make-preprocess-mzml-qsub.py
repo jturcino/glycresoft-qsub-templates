@@ -19,7 +19,7 @@ if __name__ == '__main__':
     if len(args.email) > 0:
         args.email = '#$ -m e \n#$ -M '+args.email
 
-    template = open('preprocess-mzml.qsub.tmpl', 'r').read()
+    template = open('templates/preprocess-mzml.qsub.tmpl', 'r').read()
     template = jinja2.Template(template)
     script_text = template.render(unprocessed_mzml_file=args.mzml, sample_id=args.id, dataset=args.source, email=args.email)
     sys.stdout.write(script_text)

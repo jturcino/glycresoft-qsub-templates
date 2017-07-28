@@ -35,19 +35,19 @@ if __name__ == '__main__':
         kwargs['mzid_file'] = args.mzid
         if args.rules is not None:
             kwargs['combo_rules'] = args.rules
-            template_file = 'build-hypothesis-combinatorial-mzid.qsub.tmpl'
+            template_file = 'templates/build-hypothesis-combinatorial-mzid.qsub.tmpl'
         else: # args.glycans is not None
             kwargs['nglycans'] = args.glycans
-            template_file = 'build-hypothesis-text-mzid.qsub.tmpl'
+            template_file = 'templates/build-hypothesis-text-mzid.qsub.tmpl'
 
     else: # args.fa is not None
         kwargs['fa_file'] = args.fa
         if args.rules is not None:
             kwargs['combo_rules'] = args.rules
-            template_file = 'build-hypothesis-combinatorial-fa.qsub.tmpl'
+            template_file = 'templates/build-hypothesis-combinatorial-fa.qsub.tmpl'
         else: # args.glycans is not None
             kwargs['nglycans'] = args.glycans
-            template_file = 'build-hypothesis-text-fa.qsub.tmpl'
+            template_file = 'templates/build-hypothesis-text-fa.qsub.tmpl'
 
     # handle email
     if len(args.email) > 0:
