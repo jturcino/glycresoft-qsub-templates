@@ -26,7 +26,6 @@ mzid_file=`scratch push -d $scratchdir "{{mzid_file}}"`
 db=`scratch push -d $scratchdir "{{db}}"`
 
 # run glycresoft-cli
-export NOWAL=1
 glycresoft-cli build-hypothesis glycan-combinatorial $combo_rules $db
 glycresoft-cli build-hypothesis glycopeptide-mzid -g $db -s hypothesis -G 1 -u 1 $mzid_file $db
 

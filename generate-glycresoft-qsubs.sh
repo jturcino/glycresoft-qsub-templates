@@ -23,6 +23,8 @@ Options:
   -y, --unprocessed-mzml MZML           Path to unprocessed mzML file
   -z, --processed-mzml MZML             Path to preprocessed mzML file
   -e, --email                           (Optional) Email address for qsub notifications
+  -s, --start-time TIME			(Optional) Time to begin processing unprocessed mzML files (default 12.0)
+  -t, --end-time TIME			(Optional) Time to end processing unprocessed mzML files (default 50.0)
 "
 
 while [[ $# -gt 1 ]]; do
@@ -52,6 +54,12 @@ while [[ $# -gt 1 ]]; do
         -e|--email) shift;
             email="-e $1"
             shift ;;
+	-s|--start-time) shift;
+	    begin="-st $1"
+	    shift ;;
+	-t|--end-time) shift;
+	    end="-et $1"
+	    shift ;;
         *) echo "$HELP"
             exit 0
     esac
@@ -105,7 +113,7 @@ for mzml in $pre_mzmls; do
     id="$(basename $mzml)"
     id="${id%%.*}"
     echo "    $id..."
-    ./scripts/make-preprocess-mzml-qsub.py -m $mzml -i $id -s $project_name $email >> $submission_dir/preprocess-mzml-$project_name-$id.qsub
+    ./scripts/make-preprocess-mzml-qsub.py -m $mzml -i $id -s $project_name $email $begin $end >> $submission_dir/preprocess-mzml-$project_name-$id.qsub
     out="preprocess/$id.preprocessed.mzML"
     mzmls="$mzmls $out"
 done

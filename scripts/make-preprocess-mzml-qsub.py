@@ -12,6 +12,8 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--mzml', dest='mzml', required=True, help='path to unprocessed mzML file')
     parser.add_argument('-i', '--id', dest='id', required=True, help='sample ID (eg. 20140905_02)')
     parser.add_argument('-s', '--source', dest='source', required=True, help='name of source dataset (eg. phil-82)')
+    parser.add_argument('-st', '--start-time', dest='start_time', default=12.0, type=float, help='Scan time at which to begin processing; defaults to 12.0')
+    parser.add_argument('-et', '--end-time', dest='end_time', default=50.0, type=float, help='Scant time at which to end processing; defaults to 50.0')
     parser.add_argument('-e', '--email', dest='email', default='', help='email for qsub completion notification')
     args = parser.parse_args()
 
@@ -21,5 +23,5 @@ if __name__ == '__main__':
 
     template = open('templates/preprocess-mzml.qsub.tmpl', 'r').read()
     template = jinja2.Template(template)
-    script_text = template.render(unprocessed_mzml_file=args.mzml, sample_id=args.id, dataset=args.source, email=args.email)
+    script_text = template.render(unprocessed_mzml_file=args.mzml, sample_id=args.id, dataset=args.source, start_time=args.start_time, end_time=args.end_time, email=args.email)
     sys.stdout.write(script_text)

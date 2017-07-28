@@ -25,7 +25,6 @@ db=`scratch push -d $scratchdir "{{db}}"`
 csv=`scratch push -d $scratchdir "{{csv}}"`
 
 # run glycresoft-cli
-export NOWAL=1
 glycresoft-cli export glycopeptide-identification $db 1 -o $csv
 
 # copy everything over

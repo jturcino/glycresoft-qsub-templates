@@ -33,8 +33,7 @@ if [ "$extension" == "gz" ]; then
 fi
 
 # run glycresoft-cli preprocessing and remove original mzML file
-export NOWAL=1
-glycresoft-cli mzml preprocess -p 6 -m 3 -a glycopeptide -s 12 -e 50 -an peptide $mzml_file $out_file
+glycresoft-cli mzml preprocess -p 6 -m 3 -a glycopeptide -s {{start_time}} -e {{end_time}} -an peptide $mzml_file $out_file
 rm "$mzml_file"
 
 # copy everything over

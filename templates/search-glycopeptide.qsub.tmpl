@@ -35,7 +35,6 @@ if [ "$extension" == "gz" ]; then
 fi
 
 # run glycresoft-cli
-export NOWAL=1
 glycresoft-cli analyze search-glycopeptide $input_db $processed_mzml_file 1 -mn 2e-5 -o $output_db
 
 # copy everything over

@@ -26,7 +26,6 @@ fa_file=`scratch push -d $scratchdir "{{fa_file}}"`
 db=`scratch push -d $scratchdir "{{db}}"`
 
 # run glycresoft-cli
-export NOWAL=1
 glycresoft-cli build-hypothesis glycan-combinatorial $combo_rules $db
 glycresoft-cli build-hypothesis glycopeptide-fa -g $db -s hypothesis -G 1 -u 1 -e trypsin -c "Carbamidomethyl (C)" -v "Deamidated (N)" -v "Gln->pyro-Glu (Q@N-term)" $fa_file $db
 
