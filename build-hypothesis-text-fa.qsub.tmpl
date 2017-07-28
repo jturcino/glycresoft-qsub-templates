@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#$ -S /bin/bash
+#$ -cwd
+#$ -N build-hypothesis-text-{{source}}
+#$ -j y
+#$ -o build-hypothesis-text-{{source}}.qlog
+#$ -P glyco-ms
+#$ -V
+{{email}}
+
+echo "=========================================================="
+echo "Starting on : $(date)"
+echo "Running on node : $(hostname)"
+echo "Current directory : $(pwd)"
+echo "Current job ID : $JOB_ID"
+echo "Current job name : $JOB_NAME"
+echo "Task index number : $SGE_TASK_ID"
+echo "=========================================================="
+
+source ~/.bashrc
+
+scratchdir=`scratch dir -d build-hypothesis-text-{{source}}`
+glycans=`scratch push -d $scratchdir "{{nglycans}}"`
+fa_file=`scratch push -d $scratchdir "{{fa_file}}"`
+db=`scratch push -d $scratchdir "{{db}}"`
+
+# run glycresoft-cli
+export NOWAL=1
+glycresoft-cli build-hypothesis glycan-text $glycans $db
+glycresoft-cli build-hypothesis glycopeptide-fa -g $db -s hypothesis -G 1 -u 2 -c "Carbamidomethyl (C)" -v "Deamidated (N)" -v "Gln->pyro-Glu (Q@N-term)" $fa_file $db
+
+# copy db over
+echo "Fetching finished files"
+cp $db "{{db}}"

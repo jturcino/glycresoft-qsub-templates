@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#$ -S /bin/bash
+#$ -cwd
+#$ -N consolidate-glycans-{{dataset}}
+#$ -j y
+#$ -o consolidate-glycans-{{dataset}}.qlog
+#$ -P glyco-ms
+#$ -V
+{{email}}
+
+echo "=========================================================="
+echo "Starting on : $(date)"
+echo "Running on node : $(hostname)"
+echo "Current directory : $(pwd)"
+echo "Current job ID : $JOB_ID"
+echo "Current job name : $JOB_NAME"
+echo "Task index number : $SGE_TASK_ID"
+echo "=========================================================="
+
+source ~/.bashrc
+
+scratchdir=`scratch dir -d consolidate-glycans-{{dataset}}`
+pandas=`scratch push -d $scratchdir "{{pandas}}"` 
+outfile=`scratch push -d $scratchdir "{{nglycans}}"`
+
+# load csv files and add to pandas args 
+csvs="{{csvs}}"
+csv_args=""
+for i in $csvs; do
+	csv=`scratch push -d $scratchdir "$i"`
+        csv_args="$csv_args -c $csv"
+done
+
+# run pandas
+$pandas $csv_args >> $outfile
+
+# copy everything over
+echo "Fetching finished files"
+cp $outfile "{{nglycans}}"

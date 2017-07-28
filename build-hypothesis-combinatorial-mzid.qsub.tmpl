@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#$ -S /bin/bash
+#$ -cwd
+#$ -N build-hypothesis-combinatorial-{{source}}
+#$ -j y
+#$ -o build-hypothesis-combinatorial-{{source}}.qlog
+#$ -P glyco-ms
+#$ -V
+{{email}}
+
+echo "=========================================================="
+echo "Starting on : $(date)"
+echo "Running on node : $(hostname)"
+echo "Current directory : $(pwd)"
+echo "Current job ID : $JOB_ID"
+echo "Current job name : $JOB_NAME"
+echo "Task index number : $SGE_TASK_ID"
+echo "=========================================================="
+
+source ~/.bashrc
+
+scratchdir=`scratch dir -d build-hypothesis-combinatorial-{{source}}`
+combo_rules=`scratch push -d $scratchdir "{{combo_rules}}"`
+mzid_file=`scratch push -d $scratchdir "{{mzid_file}}"`
+db=`scratch push -d $scratchdir "{{db}}"`
+
+# run glycresoft-cli
+export NOWAL=1
+glycresoft-cli build-hypothesis glycan-combinatorial $combo_rules $db
+glycresoft-cli build-hypothesis glycopeptide-mzid -g $db -s hypothesis -G 1 -u 1 $mzid_file $db
+
+# copy db over
+echo "Fetching finished files"
+cp $db "{{db}}"

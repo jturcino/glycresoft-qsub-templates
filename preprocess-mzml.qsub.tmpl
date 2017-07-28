@@ -1,0 +1,45 @@
+#!/bin/bash
+
+#$ -S /bin/bash
+#$ -cwd
+#$ -N preprocess-mzml-{{dataset}}-{{sample_id}}
+#$ -j y
+#$ -o preprocess-mzml-{{dataset}}-{{sample_id}}.qlog
+#$ -P glyco-ms
+#$ -V
+{{email}}
+
+echo "=========================================================="
+echo "Starting on : $(date)"
+echo "Running on node : $(hostname)"
+echo "Current directory : $(pwd)"
+echo "Current job ID : $JOB_ID"
+echo "Current job name : $JOB_NAME"
+echo "Task index number : $SGE_TASK_ID"
+echo "=========================================================="
+
+source ~/.bashrc
+
+scratchdir=`scratch dir -d preprocess-mzml-{{dataset}}-{{sample_id}}`
+mzml_file=`scratch push -d $scratchdir "{{unprocessed_mzml_file}}"` 
+out_file=`scratch push -d $scratchdir "{{sample_id}}.preprocessed.mzML"`
+
+# unzip if compressed
+extension="${mzml_file##*.}"
+if [ "$extension" == "gz" ]; then
+	echo "Unzipping $mzml_file"
+	gunzip $mzml_file
+	mzml_file="${mzml_file%.gz}"
+fi
+
+# run glycresoft-cli preprocessing and remove original mzML file
+export NOWAL=1
+glycresoft-cli mzml preprocess -p 6 -m 3 -a glycopeptide -s 12 -e 50 -an peptide $mzml_file $out_file
+rm "$mzml_file"
+
+# copy everything over
+echo "Fetching finished files"
+outdir="preprocess"
+mkdir -p "$outdir"
+cp $out_file "$outdir"/"{{sample_id}}".preprocessed.mzML
+cp ${out_file}-idx.json "$outdir"/"{{sample_id}}".preprocessed.mzML-idx.json

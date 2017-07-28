@@ -1,0 +1,34 @@
+#!/bin/bash
+
+#$ -S /bin/bash
+#$ -cwd
+#$ -N glycopeptide-identification-{{source}}-{{sample_id}}
+#$ -j y
+#$ -o glycopeptide-identification-{{source}}-{{sample_id}}.qlog
+#$ -P glyco-ms
+#$ -V
+{{email}}
+
+echo "=========================================================="
+echo "Starting on : $(date)"
+echo "Running on node : $(hostname)"
+echo "Current directory : $(pwd)"
+echo "Current job ID : $JOB_ID"
+echo "Current job name : $JOB_NAME"
+echo "Task index number : $SGE_TASK_ID"
+echo "=========================================================="
+
+source ~/.bashrc
+
+scratchdir=`scratch dir -d glycopeptide-identification-{{source}}-{{sample_id}}`
+db=`scratch push -d $scratchdir "{{db}}"`
+csv=`scratch push -d $scratchdir "{{csv}}"`
+
+# run glycresoft-cli
+export NOWAL=1
+glycresoft-cli export glycopeptide-identification $db 1 -o $csv
+
+# copy everything over
+echo "Fetching finished files"
+outdir="glycopeptide_csvs"
+cp $csv $outdir/"{{csv}}"
