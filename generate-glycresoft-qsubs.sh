@@ -22,9 +22,10 @@ Options:
   -r, --rules COMBINATORIAL_RULES       Path to combinatorial rule file
   -y, --unprocessed-mzml MZML           Path to unprocessed mzML file
   -z, --processed-mzml MZML             Path to preprocessed mzML file
-  -e, --email                           (Optional) Email address for qsub notifications
+  -e, --email EMAIL                     (Optional) Email address for qsub notifications
   -s, --start-time TIME			(Optional) Time to begin processing unprocessed mzML files (default 12.0)
   -t, --end-time TIME			(Optional) Time to end processing unprocessed mzML files (default 50.0)
+  -g, --glycans GLYCANS			(Optional) Create qsubs for consolidating N-glycans and additional processing
 "
 
 while [[ $# -gt 1 ]]; do
@@ -59,6 +60,9 @@ while [[ $# -gt 1 ]]; do
 	    shift ;;
 	-t|--end-time) shift;
 	    end="-et $1"
+	    shift ;;
+	-g|--glycans) shift;
+	    glycans="$1"
 	    shift ;;
         *) echo "$HELP"
             exit 0
@@ -147,9 +151,15 @@ for db in $dbs; do
     csv_args="$csv_args -c glycopeptide_csvs/$csv"
 done
 
+# EXIT HERE IF ROUND 2 PROCESSING NOT SPECIFIED
+if [ -z "$glycans" ]; then
+    exit 0
+else
+    echo 'Making qsubs for second round of processing...'
+fi
+
 # run pandas
 echo "Consolidating unique glycans..."
-glycans="nglycans.txt"
 ./scripts/make-consolidate-glycans-qsub.py $csv_args -s $project_name -o $glycans $email >> $submission_dir/consolidate-glycans-$project_name.qsub
 
 # build text hypothesis
