@@ -1,6 +1,6 @@
 # glycresoft-qsub-templates
 
-A way to generate qsub scripts for running GlycReSoft on the Boston University Shared Computing Cluster (SCC)
+A tool for generating qsub scripts for running [GlycReSoft](https://github.com/mobiusklein/glycresoft) on the Boston University [Shared Computing Cluster](https://www.bu.edu/tech/support/research/computing-resources/scc/) (SCC)
 
 ## Getting Started
 To use this repo, clone it into a directory of your choosing and add the `glycresoft-cli` to your path.
