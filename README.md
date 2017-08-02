@@ -21,6 +21,7 @@ To generate a set of qsubs, only five items are needed:
 3. path to a combinatorial rules file or nglycan file
 4. path to at least one unprocessed or preprocessed mzML file (can have multiple of one or both types)
 5. project name
+
 The paths for items 2-4 should be either absolute paths or paths relative to the project directory (item 1).
 
 ### Standard submission
@@ -30,7 +31,7 @@ A typical submission would resemble the following. Please note the `-m` flag and
 ```
 
 You may notice there are now three subdirectories in your project directory. These are created by `generate-glycresoft-qsubs.sh` to avoid cluttering the project directory. The `preprocess` subdirectory will hold all the preprocessed mzML files produced by `preprocess-mzml` qsubs. The `search` subdirectory will hold all the database files created by the `search-glycopeptide` qsubs. Lastly, the 
-`glycopeptide_csvs` directory will hold the CSV files that are the final product of the GlycReSoft pipeline.
+`glycopeptide_csvs` subdirectory will hold the CSV files that are the final product of the GlycReSoft pipeline.
 
 ### Additional options
 All currently available options can be viewed at any time with the `-h` flag.
@@ -39,15 +40,16 @@ All currently available options can be viewed at any time with the `-h` flag.
 ```
 Below are the optional arguments currently available:
 * `-e` sends an email to the provided address upon completion of each qsub script
-* `-s` specifies the time to begin processing information in the unprocessed mzML files (given with the `-y` flag); defaults to 12.0
+* `-s` specifies the time to begin processing information in the unprocessed mzML files (`-y`); defaults to 12.0
 * `-t` specifies the time to stop processing information in the unprocessed mzML files; defaults to 50.0
 
-## Submission order
+## qsub submission
 Once generated, the qsubs must be submitted in the following order:
 1. All `preprocess-mzml` qsubs (if present)
 2. `build-hypothesis` qsub
 3. All `search-glycopeptide` qsubs
 4. All `glycopeptide-identification` qsubs
+
 The qsubs should be submitted to the scheduler from the commandline. The submission command follows the format `qusb -P SCC_PROJECT -pe omp NUM_PROCESSORS QSUB_FILE`. `NUM_PROCESSORS` should aways be **4** except for proprocessing qsubs, where **6** should be used. An example is below.
 ```
 # SCC_PROJECT is glyco-ms
